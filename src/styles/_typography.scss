@@ -1,0 +1,62 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  h1, h2, h3, h4, h5, h6, p, span, label, input, textarea {
+    margin-top: 0;
+    margin-bottom: $margin;
+    color: $dark;
+  }
+  h1 {
+    font-size: 96px;
+  }
+  h1, h2 {
+    font-weight: 300;
+    letter-spacing: -1.5px;
+  }
+  h2 {
+    font-size: 48px;
+  }
+  h3 {
+    font-size: 26px;
+  }
+  h3, h4 {
+    font-weight: 400;
+  }
+  h4 {
+    font-size: 22px;
+    letter-spacing: .25px;
+  }
+  h5 {
+    font-weight: 400;
+    font-size: 18px;
+  }
+  h6, label {
+    font-weight: 500;
+    font-size: 16px;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 0px;
+    line-height: 1.15em;
+    margin-bottom: $margin;
+  }
+  p, input, textarea, label {
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    line-height: 1.7em;
+    margin-top: 0;
+  }
+  button, input[type=submit] {
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.75px;
+    line-height: 14px !important;
+  }
+  .text-center {
+    text-align: center;
+  }
+  .text-left {
+    text-align: left;
+  }
+  .text-right {
+    text-align: right;
+  }
+}

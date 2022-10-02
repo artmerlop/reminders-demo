@@ -1,0 +1,18 @@
+form {
+  > .form-group {
+    margin-bottom: $margin;
+    input, textarea {
+      width: 100%;
+    }
+  }
+  input, textarea {
+    border: 1px solid $border;
+    border-radius: $radius;
+    padding: $margin;
+    outline: none;
+  }
+  textarea {
+    height: 100px;
+    resize: none;
+  }
+}

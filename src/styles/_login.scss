@@ -1,0 +1,23 @@
+#login {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  > .container {
+    text-align: center;
+    width: 100%;
+    max-width: $loginBoxWidth;
+    > h2 {
+      margin-bottom: $largeMargin;
+      > .svg-inline--fa {
+        color: $primary;
+        font-size: 100px;
+      }
+    }
+    > .content {
+      background-color: $white;
+      padding: calc(#{$margin} * 2);
+      border-radius: $radius;
+    }
+  }
+}

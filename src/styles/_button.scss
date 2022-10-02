@@ -1,0 +1,43 @@
+button, .btn {
+  background-color: $reference;
+  border: none;
+  padding: $margin;
+  color: $white;
+  border-radius: $radius;
+  cursor: pointer;
+  transition: all 0.1s linear;
+  color: $white;
+  span, .svg-inline--fa {
+    color: inherit;
+  }
+  &.dual {
+    > .svg-inline--fa {
+      margin-right: calc(#{$margin} / 3);
+    }
+  }
+  &.large {
+    width: 100%;
+  }
+  &:hover, &.loading {
+    background-color: lighten($reference, 5);
+  }
+  &.success {
+    background-color: $success;
+    &:hover, &.loading {
+      background-color: lighten($success, 5);
+    }
+  }
+  &.danger {
+    background-color: $danger;
+    &:hover, &.loading {
+      background-color: lighten($danger, 5);
+    }
+  }
+  &.border {
+    background-color: $border;
+    color: $dark;
+    &:hover, &.loading {
+      background-color: lighten($border, 5);
+    }
+  }
+}

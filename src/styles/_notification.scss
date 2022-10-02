@@ -1,0 +1,55 @@
+#notification {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.25);
+  z-index: 12;
+  padding: $margin;
+  overflow-y: scroll;
+  display: none;
+  > .container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > .content {
+      width: 100%;
+      max-width: $notificationWidth;
+      background-color: $white;
+      border: 1px solid $border;
+      border-radius: $radius;
+      padding: $margin;
+      > .icon {
+        width: $iconSize;
+        height: $iconSize;
+        margin: 0 auto;
+        background-color: $primary;
+        color: $white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: $margin;
+        > .svg-inline--fa {
+          color: inherit;
+          font-size: calc(#{$iconSize} * 0.40);
+        }
+        &.love {
+          background-color: $love;
+        }
+        &.success {
+          background-color: $success;
+        }
+        &.danger {
+          background-color: $danger;
+        }
+      }
+    }
+  }
+  &.active {
+    display: block;
+  }
+}

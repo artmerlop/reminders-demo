@@ -1,0 +1,24 @@
+#scene {
+  position: relative;
+  padding-top: $navbarHeight;
+  > .container {
+    padding: $largeMargin;
+    > .content {
+      width: 100%;
+      max-width: $contentWidth;
+      margin: 0 auto;
+      > .message {
+        background-color: $border;
+        text-align: center;
+        padding: $largeMargin;
+        border-radius: $radius;
+        p {
+          margin-bottom: 0;
+        }
+        button {
+          margin-top: $margin;
+        }
+      }
+    }
+  }
+}
