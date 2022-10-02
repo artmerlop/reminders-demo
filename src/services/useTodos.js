@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from 'react';
+import {useEffect, useState, useContext} from 'react';
 import {NotificationContext} from '../context/notification';
 import axios from 'axios';
 const endpoint = 'https://633935db937ea77bfdc7c4ee.mockapi.io/api';

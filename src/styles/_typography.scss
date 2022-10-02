@@ -59,4 +59,11 @@ body {
   .text-right {
     text-align: right;
   }
+  .tag {
+    &.dual {
+      .svg-inline--fa {
+        margin-right: 5px;
+      }
+    }
+  }
 }

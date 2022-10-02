@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback, useContext} from 'react';
+import React, {useEffect, useCallback, useContext} from 'react';
 import {useNavigate, useParams, useLocation} from 'react-router-dom';
 import {AuthContext} from '../context/auth';
 function PrivateRoute({element: Component, authContext = null, auth = false}) {
@@ -10,7 +10,7 @@ function PrivateRoute({element: Component, authContext = null, auth = false}) {
     if (!data) {
       navigate('/login');
     }
-  }, [navigate, location]);
+  }, [navigate]);
   useEffect(() => {
     validate(context.user);
   }, [validate, context]);

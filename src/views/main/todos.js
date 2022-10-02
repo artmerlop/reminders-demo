@@ -1,27 +1,43 @@
 import React, {useEffect, useState, useContext} from 'react';
 import moment from 'moment';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import useTodos from '../../services/useTodos';
 import {AuthContext} from '../../context/auth';
 import {NotificationContext} from '../../context/notification';
 import Button from '../../components/button';
-import {TextInput, TextArea} from '../../components/form';
+import {TextInput, DateInput, TextArea} from '../../components/form';
 function TodoComposer({onSubmit = null, onDrop = null, data = {}, active = false, toggle = null}) {
+  const notification = useContext(NotificationContext);
   const [id, setId] = useState(data.id ? data.id : '');
   const [title, setTitle] = useState(data.title ? data.title : '');
   const [description, setDescription] = useState(data.description ? data.description : '');
-  const [status, setStatus] = useState(data.status ? data.status : '');
+  const [status, setStatus] = useState(data.status ? data.status : 0);
+  const [date, setDate] = useState(data.endsAt ? moment(data.endsAt).format('DD/MM/YYYY') : '');
   const handleSubmit = (e) => {
     e.preventDefault();
+    let data = {id: id, title: title, description: description, status: status}
+    if (!status) {
+      if (!date) {
+        notification.emit(`Debes agregar una fecha para continuar.`, 'danger');
+        return;
+      }
+      data.completedAt = null;
+      data.endsAt = moment(date, 'DD/MM/YYYY');
+    }
     if (!onSubmit) {
       return;
+    } else if (!title) {
+      notification.emit(`Debes agregar un titulo para continuar.`, 'danger');
+      return;
     }
-    onSubmit({id: id, title: title, description: description, status: status});
+    onSubmit(data);
     toggle();
   }
   useEffect(() => {
     setId(data.id ? data.id : '');
     setTitle(data.title ? data.title : '');
     setDescription(data.description ? data.description : '');
+    setDate(data.endsAt ? moment(data.endsAt).format('DD/MM/YYYY') : '');
     setStatus(data.status ? data.status : '');
   }, [data]);
   return (
@@ -31,11 +47,15 @@ function TodoComposer({onSubmit = null, onDrop = null, data = {}, active = false
           <form>
             <div className="form-group">
               <TextInput placeholder="Titulo" id="title" value={title}
-                onChange={(e) => setTitle(e.target.value)} />
+                onChange={(e) => setTitle(e.target.value)} maxLength={64} disabled={status} />
+            </div>
+            <div className="form-group">
+              <DateInput placeholder="Fecha (DD/MM/AAAA)" id="date" value={date}
+                onChange={(e) => setDate(e.target.value)} disabled={status} />
             </div>
             <div className="form-group">
               <TextArea placeholder="Descripción" id="description" value={description}
-                onChange={(e) => setDescription(e.target.value)} />
+                onChange={(e) => setDescription(e.target.value)} maxLength={256} disabled={status} />
             </div>
           </form>
           <div className="actions text-right">
@@ -68,16 +88,35 @@ export default function TodosScene() {
         <div className="content">
           {todos.length > 0 ?
             <div className="grid col-4 cards">
-              {todos.sort((a, b) => a.status > b.status).map((item, key) =>
+              {todos.sort((a, b) => a.endsAt < b.endsAt).sort((a, b) => a.status > b.status).map((item, key) =>
                 <div className="item" key={key}>
                   <div className="container">
                     <div className="content">
-                      <h4>{item.title}</h4>
-                      <p>{item.description}</p>
+                      <h5>{item.title}</h5>
+                      {item.description ?
+                        <p>{item.description}</p>
+                      : null}
+                      {item.endsAt ?
+                        <p className="caption tag dual">
+                          <FontAwesomeIcon icon={['fas', 'calendar-day']} />
+                          <span>{moment(item.endsAt).format('DD/MM/YYYY')}</span>
+                        </p>
+                      : null}
+                      {item.completedAt ?
+                        <p className="caption tag dual">
+                          <FontAwesomeIcon icon={['fas', 'calendar-check']} />
+                          <span>{moment(item.completedAt).format('DD/MM/YYYY')}</span>
+                        </p>
+                      : null}
                     </div>
                     <div className="status">
                       <Button onClick={() => {
                           item.status = !item.status
+                          if (!item.status) {
+                            item.completedAt = null
+                          } else {
+                            item.completedAt = moment()
+                          }
                           save(item)
                         }} className={`${item.status ? 'success' : 'border'} large`} disabled={disabled}
                         label={item.status ? 'Completado' : 'Completar'} icon="circle" iconPrefix={item.status ? 'fas' : 'far'} />

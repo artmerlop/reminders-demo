@@ -7,9 +7,7 @@ import PrivateRoute from './components/privateRoute';
 import Layout from './components/layout';
 import LoginView from './views/auth/login';
 import TodosScene from './views/main/todos';
-const Context = React.createContext();
 export default function App() {
-  const [user, setUser] = React.useState(null);
   return (
     <AuthProvider>
       <NotificationProvider>
