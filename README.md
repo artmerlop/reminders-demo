@@ -29,3 +29,7 @@ o
 ```
 yarn start
 ```
+
+## Instrucciones
+
+Para acceder al panel se puede poner cualquier usuario y no es necesaria una contraseña.

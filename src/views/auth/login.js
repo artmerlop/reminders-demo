@@ -1,12 +1,25 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {NotificationContext} from '../../context/notification';
 import {TextInput} from '../../components/form';
 import Button from '../../components/button';
 export default function LoginView({setUser}) {
+  const notification = useContext(NotificationContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const changeUsername = (e) => {
+    let value = e.target.value;
+    setUsername(value.replace(/[^A-Z0-9]/ig, ''));
+  }
   const handleLogin = (e) => {
     e.preventDefault();
+    if (!username) {
+      notification.emit(`Debes ingresar un nombre de usuario para ingresar.`, 'danger');
+      return;
+    } else if (username.length < 5) {
+      notification.emit(`Debes ingresar un nombre de usuario válido.`, 'danger');
+      return;
+    }
     setUser({name: username});
   }
   return (
@@ -17,7 +30,7 @@ export default function LoginView({setUser}) {
           <form onSubmit={handleLogin}>
             <div className="form-group">
               <TextInput placeholder="Usuario" id="username" value={username} className="text-center"
-                onChange={(e) => setUsername(e.target.value)} />
+                onChange={changeUsername} maxLength={16} />
             </div>
             <div className="form-group">
               <TextInput placeholder="Contraseña" id="password" type="password" value={password} className="text-center"
