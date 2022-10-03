@@ -23,6 +23,14 @@ function TodoComposer({onSubmit = null, onDrop = null, data = {}, active = false
       }
       data.completedAt = null;
       data.endsAt = moment(date, 'DD/MM/YYYY');
+      if (!data.endsAt.isValid()) {
+        notification.emit(`Debes ingresar una fecha valida.`, 'danger');
+        return;
+      }
+      if (data.endsAt < moment()) {
+        notification.emit(`La fecha no puede ser anterior al día de hoy.`, 'danger');
+        return;
+      }
     }
     if (!onSubmit) {
       return;
