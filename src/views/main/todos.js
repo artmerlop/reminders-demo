@@ -4,10 +4,12 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import useTodos from '../../services/useTodos';
 import {AuthContext} from '../../context/auth';
 import {NotificationContext} from '../../context/notification';
+import {LoaderContext} from '../../context/loader';
 import Button from '../../components/button';
 import {TextInput, DateInput, TextArea} from '../../components/form';
 function TodoComposer({onSubmit = null, onDrop = null, data = {}, active = false, toggle = null}) {
   const notification = useContext(NotificationContext);
+  const [loading, setLoading] = useState(false);
   const [id, setId] = useState(data.id ? data.id : '');
   const [title, setTitle] = useState(data.title ? data.title : '');
   const [description, setDescription] = useState(data.description ? data.description : '');
@@ -15,6 +17,7 @@ function TodoComposer({onSubmit = null, onDrop = null, data = {}, active = false
   const [date, setDate] = useState(data.endsAt ? moment(data.endsAt).format('DD/MM/YYYY') : '');
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
     let data = {id: id, title: title, description: description, status: status}
     if (!status) {
       if (!date) {
@@ -22,13 +25,15 @@ function TodoComposer({onSubmit = null, onDrop = null, data = {}, active = false
         return;
       }
       data.completedAt = null;
-      data.endsAt = moment(date, 'DD/MM/YYYY');
+      data.endsAt = moment(date, 'YYYY-MM-DD');
       if (!data.endsAt.isValid()) {
         notification.emit(`Debes ingresar una fecha valida.`, 'danger');
+        setLoading(false);
         return;
       }
       if (data.endsAt < moment()) {
         notification.emit(`La fecha no puede ser anterior al día de hoy.`, 'danger');
+        setLoading(false);
         return;
       }
     }
@@ -36,16 +41,18 @@ function TodoComposer({onSubmit = null, onDrop = null, data = {}, active = false
       return;
     } else if (!title) {
       notification.emit(`Debes agregar un titulo para continuar.`, 'danger');
+      setLoading(false);
       return;
     }
     onSubmit(data);
+    setLoading(false);
     toggle();
   }
   useEffect(() => {
     setId(data.id ? data.id : '');
     setTitle(data.title ? data.title : '');
     setDescription(data.description ? data.description : '');
-    setDate(data.endsAt ? moment(data.endsAt).format('DD/MM/YYYY') : '');
+    setDate(data.endsAt ? moment(data.endsAt, 'YYYY-MM-DD').format('YYYY-MM-DD') : '');
     setStatus(data.status ? data.status : '');
   }, [data]);
   return (
@@ -58,7 +65,7 @@ function TodoComposer({onSubmit = null, onDrop = null, data = {}, active = false
                 onChange={(e) => setTitle(e.target.value)} maxLength={64} disabled={status} />
             </div>
             <div className="form-group">
-              <DateInput placeholder="Fecha (DD/MM/AAAA)" id="date" value={date}
+              <DateInput placeholder="Fecha (DD/MM/AAAA)" id="date" value={date} type="date"
                 onChange={(e) => setDate(e.target.value)} disabled={status} />
             </div>
             <div className="form-group">
@@ -68,7 +75,7 @@ function TodoComposer({onSubmit = null, onDrop = null, data = {}, active = false
           </form>
           <div className="actions text-right">
             {onSubmit ?
-              <Button type="button" className="success" label="Guardar" icon="save" onClick={handleSubmit} />
+              <Button type="button" className="success" label="Guardar" icon="save" onClick={handleSubmit} loading={loading} />
             : null}
             {id && onDrop ?
               <Button type="button" className="danger" label="Eliminar" icon="trash" />
@@ -83,12 +90,22 @@ function TodoComposer({onSubmit = null, onDrop = null, data = {}, active = false
 export default function TodosScene() {
   const session = useContext(AuthContext);
   const notification = useContext(NotificationContext);
+  const loader = useContext(LoaderContext);
   const [showComposer, setShowComposer] = useState(false)
   const [selected, setSelected] = useState({})
   const [todos, loading, error, save, saving, drop, droping] = useTodos();
   const disabled = loading || error !== null || saving || droping
   useEffect(() => {
-    notification.emit(`¡Hola @${session.user.name}!`, 'welcome');
+    if (loading || saving || droping) {
+      loader.emit(true);
+    } else {
+      loader.emit(false);
+    }
+  })
+  useEffect(() => {
+    if (session.user) {
+      notification.emit(`¡Hola @${session.user.name}!`, 'welcome');
+    }
   }, [session]);
   return (
     <React.Fragment>

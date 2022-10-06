@@ -4,9 +4,14 @@ const AuthContext = React.createContext({
   setUser: () => {}
 });
 const AuthProvider = (props) => {
-  const [user, setUserValue] = useState(null);
+  const [user, setUserValue] = useState(localStorage.getItem('@user') ? JSON.parse(localStorage.getItem('@user')) : null);
   const setUser = (value) => {
     setUserValue(value);
+    if (value) {
+      localStorage.setItem('@user', JSON.stringify(value));
+    } else {
+      localStorage.removeItem('@user');
+    }
   };
   return (
     <AuthContext.Provider value={{user, setUser}}>

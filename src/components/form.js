@@ -1,3 +1,4 @@
+import moment from 'moment';
 export function TextInput({id = '', type = 'text', value = '', onChange = null, placeholder = '', className = '', maxLength = 256,
   disabled = false}) {
   return (
@@ -17,6 +18,9 @@ export function DateInput({id = '', type = 'text', value = '', onChange = null, 
     return v;
   }
   const handleChange = (e) => {
+    return onChange(e);
+  }
+  const handleChangeDisabled = (e) => {
     if (!onChange) {
       return;
     }

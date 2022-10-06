@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {NotificationContext} from '../../context/notification';
 import {TextInput} from '../../components/form';
 import Button from '../../components/button';
-export default function LoginView({setUser}) {
+export default function LoginView({setUser, navigate}) {
   const notification = useContext(NotificationContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -21,6 +21,7 @@ export default function LoginView({setUser}) {
       return;
     }
     setUser({name: username});
+    navigate('/');
   }
   return (
     <div id="login">

@@ -39,14 +39,14 @@ export default function useTodos() {
     }
   }
   const refreshTodos = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const request = await axios(`${endpoint}/todos`);
-      setData(request.data)
+      setData(request.data);
       setLoading(false)
     } catch (error) {
-      setLoading(false)
-      setError(error.message)
+      setLoading(false);
+      setError(error.message);
     }
   }
   useEffect(() => {
