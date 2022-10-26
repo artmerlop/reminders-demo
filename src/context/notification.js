@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useReducer} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Button from '../components/button';
 const NotificationContext = React.createContext({
@@ -6,30 +6,30 @@ const NotificationContext = React.createContext({
   notificationText: null,
   emit: () => {}
 });
-const NotificationProvider = (props) => {
-  const [notification, setNotification] = useState(null);
-  const [notificationText, setNotificationText] = useState(null);
+function NotificationProvider(props) {
+  //const reducer = (prev, {text, type}) => {
+  //  return {text, type}
+  //}
+  const [state, dispatch] = useReducer((prevState, newState) => newState, {text: null, type: null});
   const emit = (text, type = 'simple') => {
-    setNotificationText(text);
-    setNotification(type);
+    dispatch({text, type})
   };
   const clear = () => {
-    setNotificationText(null);
-    setNotification(null);
+    dispatch({text: null, type: null})
   };
   return (
-    <NotificationContext.Provider value={{emit, clear, notification, notificationText}}>
+    <NotificationContext.Provider value={{emit, clear}}>
       {props.children}
-      <div id="notification" className={notification ? 'active' : ''}>
+      <div id="notification" className={state.type ? 'active' : ''}>
         <div className="container">
           <div className="content">
-            {notification !== 'simple' ?
-              <div className={`icon ${notification === 'success' ? 'success' : (notification === 'danger' ? 'danger' : 'love')}`}>
-                <FontAwesomeIcon icon={['fas', notification === 'success' ? 'check' : (notification === 'danger' ? 'times' : 'heart')]} />
+            {state.type !== 'simple' ?
+              <div className={`icon ${state.type === 'success' ? 'success' : (state.type === 'danger' ? 'danger' : 'love')}`}>
+                <FontAwesomeIcon icon={['fas', state.type === 'success' ? 'check' : (state.type === 'danger' ? 'times' : 'heart')]} />
               </div>
             : null}
             <div className="body">
-              <p className="text-center">{notificationText}</p>
+              <p className="text-center">{state.text}</p>
             </div>
             <div className="actions text-center">
               <Button className="border" label="Cerrar" onClick={() => clear()} />

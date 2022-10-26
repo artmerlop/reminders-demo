@@ -1,56 +1,50 @@
-import {useEffect, useState, useContext} from 'react';
-import {NotificationContext} from '../context/notification';
-import axios from 'axios';
-const endpoint = 'https://633935db937ea77bfdc7c4ee.mockapi.io/api';
+import {useEffect, useCallback, useState, useReducer, useContext} from 'react'
+import {NotificationContext} from '../context/notification'
+import axios from 'axios'
+const endpoint = 'https://633935db937ea77bfdc7c4ee.mockapi.io/api'
 export default function useTodos() {
-  const notification = useContext(NotificationContext);
-  const [error, setError] = useState(null);
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [droping, setDroping] = useState(false);
+  const notification = useContext(NotificationContext)
+  const [state, dispatch] = useReducer((prevState, newState) => ({...prevState, ...newState}), {
+    data: [], loading: false, saving: false, droping: false, error: null
+  })
   const save = async (data = []) => {
-    setSaving(data.id ? data.id : true)
+    dispatch({saving: data.id ? data.id : true})
     try {
       if (!data.id) {
-        await axios.post(`${endpoint}/todos`, data);
-        notification.emit('La actividad se ha creado correctamente.', 'success');
+        await axios.post(`${endpoint}/todos`, data)
+        notification.emit('La actividad se ha creado correctamente.', 'success')
       } else {
-        await axios.put(`${endpoint}/todos/${data.id}`, data);
-        notification.emit('La actividad se ha actualizado correctamente.', 'success');
+        await axios.put(`${endpoint}/todos/${data.id}`, data)
+        notification.emit('La actividad se ha actualizado correctamente.', 'success')
       }
-      setSaving(false)
+      dispatch({saving: false})
       refreshTodos()
     } catch (error) {
-      setSaving(false)
-      setError(error.message)
+      dispatch({saving: false, error: error.message})
     }
   }
   const drop = async (id) => {
-    setDroping(true)
+    dispatch({droping: true})
     try {
-      await axios.delete(`${endpoint}/todos/${id}`);
-      notification.emit('La actividad se ha eliminado correctamente.', 'success');
-      setDroping(false)
+      await axios.delete(`${endpoint}/todos/${id}`)
+      notification.emit('La actividad se ha eliminado correctamente.', 'success')
+      dispatch({droping: false})
       refreshTodos()
     } catch (error) {
-      setDroping(false)
-      setError(error.message)
+      dispatch({droping: false, error: error.message})
     }
   }
-  const refreshTodos = async () => {
-    setLoading(true);
+  const refreshTodos = useCallback(async () => {
+    dispatch({loading: true})
     try {
-      const request = await axios(`${endpoint}/todos`);
-      setData(request.data);
-      setLoading(false)
+      const request = await axios(`${endpoint}/todos`)
+      dispatch({data: request.data, loading: false})
     } catch (error) {
-      setLoading(false);
-      setError(error.message);
+      dispatch({error: error.message, loading: false})
     }
-  }
+  })
   useEffect(() => {
     refreshTodos()
-  }, []);
-  return [data, loading, error, save, saving, drop, droping];
-};
+  }, [])
+  return [state, save, drop]
+}

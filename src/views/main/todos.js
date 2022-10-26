@@ -1,65 +1,65 @@
-import React, {useEffect, useState, useContext} from 'react';
-import moment from 'moment';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import useTodos from '../../services/useTodos';
-import {AuthContext} from '../../context/auth';
-import {NotificationContext} from '../../context/notification';
-import {LoaderContext} from '../../context/loader';
-import Button from '../../components/button';
-import {TextInput, DateInput, TextArea} from '../../components/form';
+import React, {useEffect, useCallback, useState, useRef, useContext} from 'react'
+import moment from 'moment'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import useTodos from '../../services/useTodos'
+import {AuthContext} from '../../context/auth'
+import {NotificationContext} from '../../context/notification'
+import {LoaderContext} from '../../context/loader'
+import Button from '../../components/button'
+import {TextInput, DateInput, TextArea} from '../../components/form'
 function TodoComposer({onSubmit = null, onDrop = null, data = {}, active = false, toggle = null}) {
-  const notification = useContext(NotificationContext);
-  const [loading, setLoading] = useState(false);
-  const [id, setId] = useState(data.id ? data.id : '');
-  const [title, setTitle] = useState(data.title ? data.title : '');
-  const [description, setDescription] = useState(data.description ? data.description : '');
-  const [status, setStatus] = useState(data.status ? data.status : 0);
-  const [date, setDate] = useState(data.endsAt ? moment(data.endsAt).format('DD/MM/YYYY') : '');
+  const notification = useContext(NotificationContext)
+  const [loading, setLoading] = useState(false)
+  const [id, setId] = useState(data.id ? data.id : '')
+  const [title, setTitle] = useState(data.title ? data.title : '')
+  const [description, setDescription] = useState(data.description ? data.description : '')
+  const [status, setStatus] = useState(data.status ? data.status : 0)
+  const [date, setDate] = useState(data.endsAt ? moment(data.endsAt).format('DD/MM/YYYY') : '')
   const handleSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
     let data = {id: id, title: title, description: description, status: status}
     if (!status) {
       if (!date) {
-        notification.emit(`Debes agregar una fecha para continuar.`, 'danger');
-        return;
+        notification.emit(`Debes agregar una fecha para continuar.`, 'danger')
+        return
       }
-      data.completedAt = null;
-      data.endsAt = moment(date, 'YYYY-MM-DD');
+      data.completedAt = null
+      data.endsAt = moment(date, 'YYYY-MM-DD')
       if (!data.endsAt.isValid()) {
-        notification.emit(`Debes ingresar una fecha valida.`, 'danger');
-        setLoading(false);
-        return;
+        notification.emit(`Debes ingresar una fecha valida.`, 'danger')
+        setLoading(false)
+        return
       }
       if (data.endsAt < moment()) {
-        notification.emit(`La fecha no puede ser anterior al día de hoy.`, 'danger');
-        setLoading(false);
-        return;
+        notification.emit(`La fecha no puede ser anterior al día de hoy.`, 'danger')
+        setLoading(false)
+        return
       }
     }
     if (!onSubmit) {
-      return;
+      return
     } else if (!title) {
-      notification.emit(`Debes agregar un titulo para continuar.`, 'danger');
-      setLoading(false);
-      return;
+      notification.emit(`Debes agregar un titulo para continuar.`, 'danger')
+      setLoading(false)
+      return
     }
-    onSubmit(data);
-    setLoading(false);
-    toggle();
+    onSubmit(data)
+    setLoading(false)
+    toggle()
   }
   useEffect(() => {
-    setId(data.id ? data.id : '');
-    setTitle(data.title ? data.title : '');
-    setDescription(data.description ? data.description : '');
-    setDate(data.endsAt ? moment(data.endsAt, 'YYYY-MM-DD').format('YYYY-MM-DD') : '');
-    setStatus(data.status ? data.status : '');
-  }, [data]);
+    setId(data.id ? data.id : '')
+    setTitle(data.title ? data.title : '')
+    setDescription(data.description ? data.description : '')
+    setDate(data.endsAt ? moment(data.endsAt, 'YYYY-MM-DD').format('YYYY-MM-DD') : '')
+    setStatus(data.status ? data.status : '')
+  }, [data])
   return (
     <div id="composer" className={`${active ? 'active' : ''}`}>
       <div className="container">
         <div className="content">
-          <form>
+          <form ref={formRef}>
             <div className="form-group">
               <TextInput placeholder="Titulo" id="title" value={title}
                 onChange={(e) => setTitle(e.target.value)} maxLength={64} disabled={status} />
@@ -88,25 +88,26 @@ function TodoComposer({onSubmit = null, onDrop = null, data = {}, active = false
   )
 }
 export default function TodosScene() {
-  const session = useContext(AuthContext);
-  const notification = useContext(NotificationContext);
-  const loader = useContext(LoaderContext);
-  const [showComposer, setShowComposer] = useState(false)
+  const session = useContext(AuthContext)
+  const notification = useContext(NotificationContext)
+  const loader = useContext(LoaderContext)
+  const [showComposer, toggleComposer] = useState(false)
   const [selected, setSelected] = useState({})
-  const [todos, loading, error, save, saving, drop, droping] = useTodos();
-  const disabled = loading || error !== null || saving || droping
+  const [state, save, drop] = useTodos()
+  const {data: todos, saving, loading, error, droping} = state
+  const disabled = loading || saving || droping
   useEffect(() => {
     if (loading || saving || droping) {
-      loader.emit(true);
+      loader.emit(true)
     } else {
-      loader.emit(false);
+      loader.emit(false)
     }
-  })
+  }, [state])
   useEffect(() => {
     if (session.user) {
-      notification.emit(`¡Hola @${session.user.name}!`, 'welcome');
+      notification.emit(`¡Hola @${session.user.name}!`, 'welcome')
     }
-  }, [session]);
+  }, [session])
   return (
     <React.Fragment>
       <div className="container">
@@ -147,7 +148,7 @@ export default function TodosScene() {
                         label={item.status ? 'Completado' : 'Completar'} icon="circle" iconPrefix={item.status ? 'fas' : 'far'} />
                     </div>
                     <div className="actions">
-                      <Button onClick={() => {setShowComposer(true); setSelected(item);}} className="reference" icon="edit" disabled={disabled} />
+                      <Button onClick={() => {toggleComposer(true); setSelected(item)}} className="reference" icon="edit" disabled={disabled} />
                       <Button onClick={() => drop(item.id)} className="danger" icon="trash" disabled={disabled} />
                     </div>
                   </div>
@@ -156,7 +157,7 @@ export default function TodosScene() {
               <div className="item">
                 <div className="container">
                   <div className="content">
-                    <Button onClick={() => setShowComposer(true)} className="border cover" icon="plus-circle" disabled={disabled} />
+                    <Button onClick={() => toggleComposer(true)} className="border cover" icon="plus-circle" disabled={disabled} />
                   </div>
                 </div>
               </div>
@@ -164,15 +165,15 @@ export default function TodosScene() {
           :
             <div className="message">
               <p>Aún no hay nada para mostrar.</p>
-              <Button onClick={() => setShowComposer(true)} className="reference" label="Crear actividad" icon="plus-circle" disabled={disabled} />
+              <Button onClick={() => toggleComposer(true)} className="reference" label="Crear actividad" icon="plus-circle" disabled={disabled} />
             </div>
           }
         </div>
       </div>
       <TodoComposer onSubmit={save} active={showComposer} data={selected} toggle={() => {
-          setSelected({});
-          setShowComposer(false)
+          setSelected({})
+          toggleComposer(false)
         }} />
     </React.Fragment>
-  );
+  )
 }
