@@ -19,14 +19,15 @@ export function storage(action, key, data = null) {
   switch (action) {
     case 'set':
       return set(key, data)
-      break;
+      break
     case 'get':
       return get(key)
-      break;
+      break
     case 'remove':
       return remove(key)
-      break;
+      break
     default:
-      break;
+      break
+      return
   }
 }
