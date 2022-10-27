@@ -7,10 +7,9 @@ export function storage(action, key, data = null) {
     }
   }
   const get = (key) => {
-    let item = localStorage.getItem(key)
-    if (item) {
-      return JSON.parse(item)
-    } else {
+    try {
+      return JSON.parse(localStorage.getItem(key))
+    } catch {
       return null
     }
   }
