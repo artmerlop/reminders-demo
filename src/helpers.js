@@ -18,13 +18,13 @@ export function storage(action, key, data = null) {
   }
   switch (action) {
     case 'set':
-      set(key, data)
+      return set(key, data)
       break;
     case 'get':
-      get(key)
+      return get(key)
       break;
     case 'remove':
-      remove(key)
+      return remove(key)
       break;
     default:
       break;
