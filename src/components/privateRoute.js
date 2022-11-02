@@ -1,7 +1,7 @@
 import React, {useEffect, useCallback, useContext} from 'react';
 import {useNavigate, useParams, useLocation} from 'react-router-dom';
 import {AuthContext} from '../context/auth';
-function PrivateRoute({element: Component, authContext = null}) {
+function PrivateRoute({element: Component}) {
   const navigate = useNavigate();
   const params = useParams();
   const location = useLocation();
