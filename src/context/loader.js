@@ -1,9 +1,6 @@
-import React, {useReducer} from 'react'
+import React, {useReducer, useContext} from 'react'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import Button from '../components/button'
-const LoaderContext = React.createContext({
-  emit: () => {}
-})
+const LoaderContext = React.createContext()
 const LoaderProvider = (props) => {
   const [state, emit] = useReducer((prevState, newState) => ({show: newState}), {show: false})
   return (
@@ -21,4 +18,11 @@ const LoaderProvider = (props) => {
     </LoaderContext.Provider>
   )
 }
-export {LoaderProvider, LoaderContext}
+function useLoader() {
+  const context = useContext(LoaderContext)
+  if (!context) {
+    throw new Error('useLoader must be called within LoaderProvider')
+  }
+  return context
+}
+export {LoaderProvider, useLoader}

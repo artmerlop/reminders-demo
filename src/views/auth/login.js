@@ -1,10 +1,10 @@
-import React, {useState, useContext} from 'react';
+import React, {useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {NotificationContext} from '../../context/notification';
+import {useNotification} from '../../context/notification';
 import {TextInput} from '../../components/form';
 import Button from '../../components/button';
 export default function LoginView({setUser, navigate}) {
-  const notification = useContext(NotificationContext);
+  const notification = useNotification();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const changeUsername = (e) => {

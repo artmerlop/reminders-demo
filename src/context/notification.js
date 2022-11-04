@@ -1,11 +1,7 @@
-import React, {useReducer} from 'react';
+import React, {useReducer, useContext} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Button from '../components/button';
-const NotificationContext = React.createContext({
-  notification: null,
-  notificationText: null,
-  emit: () => {}
-});
+const NotificationContext = React.createContext();
 function NotificationProvider(props) {
   //const reducer = (prev, {text, type}) => {
   //  return {text, type}
@@ -40,4 +36,11 @@ function NotificationProvider(props) {
     </NotificationContext.Provider>
   );
 };
-export {NotificationProvider, NotificationContext}
+function useNotification() {
+  const context = useContext(NotificationContext)
+  if (!context) {
+    throw new Error('useNotification must be called inside a NotificationProvider.')
+  }
+  return context
+}
+export {NotificationProvider, useNotification}

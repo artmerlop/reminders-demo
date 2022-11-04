@@ -1,15 +1,15 @@
-import React, {useEffect, useState, useContext, Suspense} from 'react'
+import React, {useEffect, useState, Suspense} from 'react'
 import useTodos from '../../services/useTodos'
-import {AuthContext} from '../../context/auth'
-import {NotificationContext} from '../../context/notification'
-import {LoaderContext} from '../../context/loader'
+import {useAuth} from '../../context/auth'
+import {useNotification} from '../../context/notification'
+import {useLoader} from '../../context/loader'
 import Button from '../../components/button'
 const TodoCard = React.lazy(() => import('../../components/todos/card'))
 const TodoComposer = React.lazy(() => import('../../components/todos/composer'))
 export default function TodosScene() {
-  const session = useContext(AuthContext)
-  const notification = useContext(NotificationContext)
-  const loader = useContext(LoaderContext)
+  const session = useAuth()
+  const notification = useNotification()
+  const loader = useLoader()
   const [showComposer, toggleComposer] = useState(false)
   const [selected, setSelected] = useState({})
   const [state, save, drop] = useTodos()

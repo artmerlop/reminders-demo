@@ -1,9 +1,6 @@
-import React, {useState} from 'react'
+import React, {useContext, useState} from 'react'
 import {storage} from '../helpers'
-const AuthContext = React.createContext({
-  user: null,
-  setUser: () => {}
-})
+const AuthContext = React.createContext()
 const AuthProvider = (props) => {
   const [user, setUserValue] = useState(storage('get', '@user'))
   const setUser = (value) => {
@@ -20,4 +17,11 @@ const AuthProvider = (props) => {
     </AuthContext.Provider>
   )
 }
-export {AuthContext, AuthProvider}
+function useAuth() {
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error('useAuth must be called within an AuthProvider.')
+  }
+  return context
+}
+export {AuthProvider, useAuth}

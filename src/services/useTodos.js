@@ -1,9 +1,9 @@
-import {useEffect, useCallback, useState, useReducer, useContext} from 'react'
-import {NotificationContext} from '../context/notification'
+import {useEffect, useCallback, useReducer} from 'react'
+import {useNotification} from '../context/notification'
 import axios from 'axios'
 const endpoint = 'https://633935db937ea77bfdc7c4ee.mockapi.io/api'
 export default function useTodos() {
-  const notification = useContext(NotificationContext)
+  const notification = useNotification()
   const [state, dispatch] = useReducer((prevState, newState) => ({...prevState, ...newState}), {
     data: [], loading: false, saving: false, droping: false, error: null
   })

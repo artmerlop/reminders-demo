@@ -1,11 +1,11 @@
-import {useRef, useCallback, useLayoutEffect} from 'react'
+import {useRef, useCallback, useReducer, useLayoutEffect} from 'react'
 function useSafeDispatch(dispatch) {
   const mounted = useRef(false)
   useLayoutEffect(() => {
     mounted.current = true
     return () => mounted.current = false
   }, [])
-  return React.useCallback((...args) => (mounted.current ? dispatch(...args) : void 0), [dispatch])
+  return useCallback((...args) => (mounted.current ? dispatch(...args) : void 0), [dispatch])
 }
 function asyncReducer(state, action) {
   switch (action.type) {
@@ -20,7 +20,7 @@ function asyncReducer(state, action) {
   }
 }
 function useAsync(initialState) {
-  const [state, unsafeDispatch] = React.useReducer(asyncReducer, {
+  const [state, unsafeDispatch] = useReducer(asyncReducer, {
     status: 'idle',
     data: null,
     error: null,

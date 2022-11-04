@@ -1,9 +1,9 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Button from './button';
-import {AuthContext} from '../context/auth';
+import {useAuth} from '../context/auth';
 export default function Navbar() {
-  const session = useContext(AuthContext)
+  const session = useAuth()
   return (
     <nav>
       <div className="container">

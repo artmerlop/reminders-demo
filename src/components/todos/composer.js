@@ -1,10 +1,10 @@
-import React, {useEffect, useState, useContext} from 'react'
+import React, {useEffect, useState} from 'react'
 import moment from 'moment'
-import {NotificationContext} from '../../context/notification'
+import {useNotification} from '../../context/notification'
 import Button from '../button'
 import {TextInput, DateInput, TextArea} from '../form'
 function TodoComposer({onSubmit = null, onDrop = null, data = {}, active = false, toggle = null}) {
-  const notification = useContext(NotificationContext)
+  const notification = useNotification()
   const [loading, setLoading] = useState(false)
   const [id, setId] = useState(data.id ? data.id : '')
   const [title, setTitle] = useState(data.title ? data.title : '')
