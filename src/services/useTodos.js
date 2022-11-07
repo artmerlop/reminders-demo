@@ -1,11 +1,13 @@
-import {useEffect, useCallback, useReducer} from 'react'
+import {useReducer} from 'react'
+import {useQuery, useQueryClient} from 'react-query'
 import {useNotification} from '../context/notification'
 import axios from 'axios'
 const endpoint = 'https://633935db937ea77bfdc7c4ee.mockapi.io/api'
 export default function useTodos() {
   const notification = useNotification()
-  const [state, dispatch] = useReducer((prevState, newState) => ({...prevState, ...newState}), {
-    data: [], loading: false, saving: false, droping: false, error: null
+  const queryClient = useQueryClient()
+  const todos = useQuery('todos', async () => {
+    return axios.get(`${endpoint}/todos`).then(res => res.data)
   })
   const save = async (data = []) => {
     dispatch({saving: data.id ? data.id : true})
@@ -18,8 +20,9 @@ export default function useTodos() {
         notification.emit('La actividad se ha actualizado correctamente.', 'success')
       }
       dispatch({saving: false})
-      refreshTodos()
+      queryClient.invalidateQueries('todos')
     } catch (error) {
+      console.log(error.message)
       dispatch({saving: false, error: error.message})
     }
   }
@@ -29,22 +32,14 @@ export default function useTodos() {
       await axios.delete(`${endpoint}/todos/${id}`)
       notification.emit('La actividad se ha eliminado correctamente.', 'success')
       dispatch({droping: false})
-      refreshTodos()
+      queryClient.invalidateQueries('todos')
     } catch (error) {
       dispatch({droping: false, error: error.message})
     }
   }
-  const refreshTodos = useCallback(async () => {
-    dispatch({loading: true})
-    try {
-      const request = await axios(`${endpoint}/todos`)
-      dispatch({data: request.data, loading: false})
-    } catch (error) {
-      dispatch({error: error.message, loading: false})
-    }
+  const [state, dispatch] = useReducer((prevState, newState) => ({...prevState, ...newState}), {
+    saving: false, droping: false, error: null
   })
-  useEffect(() => {
-    refreshTodos()
-  }, [])
-  return [state, save, drop]
+  const actions = {...state, save, drop}
+  return {todos, actions}
 }

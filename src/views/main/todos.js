@@ -12,16 +12,12 @@ export default function TodosScene() {
   const loader = useLoader()
   const [showComposer, toggleComposer] = useState(false)
   const [selected, setSelected] = useState({})
-  const [state, save, drop] = useTodos()
-  const {data: todos, saving, loading, error, droping} = state
-  const disabled = loading || saving || droping
+  const {todos, actions} = useTodos()
+  const {save, drop, saving, droping} = actions
+  const disabled = todos.isFetching || saving || droping
   useEffect(() => {
-    if (loading || saving || droping) {
-      loader.emit(true)
-    } else {
-      loader.emit(false)
-    }
-  }, [state])
+    loader.emit(todos.isFetching)
+  }, [todos.isFetching])
   useEffect(() => {
     if (session.user) {
       notification.emit(`¡Hola @${session.user.name}!`, 'welcome')
@@ -31,10 +27,10 @@ export default function TodosScene() {
     <React.Fragment>
       <div className="container">
         <div className="content">
-          {todos.length > 0 ?
+          {todos.data?.length > 0 ?
             <div className="grid col-4 cards">
               <Suspense fallback={<span></span>}>
-                {todos.sort((a, b) => a.endsAt < b.endsAt).sort((a, b) => a.status > b.status).map((item, key) =>
+                {todos.data.sort((a, b) => a.endsAt < b.endsAt).sort((a, b) => a.status > b.status).map((item, key) =>
                   <TodoCard item={item} key={key} handleSave={save} handleDrop={drop} toggleComposer={(pick) => {
                     toggleComposer(true);
                     setSelected(pick)

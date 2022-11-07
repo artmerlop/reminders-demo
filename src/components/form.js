@@ -1,4 +1,3 @@
-import moment from 'moment';
 export function TextInput({id = '', type = 'text', value = '', onChange = null, placeholder = '', className = '', maxLength = 256,
   disabled = false}) {
   return (
@@ -8,24 +7,7 @@ export function TextInput({id = '', type = 'text', value = '', onChange = null, 
 }
 export function DateInput({id = '', type = 'text', value = '', onChange = null, placeholder = '', className = '',
   disabled = false}) {
-  const maskDate = (value) => {
-    let v = value.replace(/\D/g,'').slice(0, 10);
-    if (v.length >= 5) {
-      return `${v.slice(0,2)}/${v.slice(2,4)}/${v.slice(4)}`;
-    } else if (v.length >= 3) {
-      return `${v.slice(0,2)}/${v.slice(2)}`;
-    }
-    return v;
-  }
   const handleChange = (e) => {
-    return onChange(e);
-  }
-  const handleChangeDisabled = (e) => {
-    if (!onChange) {
-      return;
-    }
-    let value = maskDate(e.target.value);
-    e.target.value = value;
     return onChange(e);
   }
   return (
