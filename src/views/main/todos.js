@@ -1,4 +1,5 @@
 import React, {useEffect, useState, Suspense} from 'react'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import useTodos from '../../services/useTodos'
 import {useAuth} from '../../context/auth'
 import {useNotification} from '../../context/notification'
@@ -14,10 +15,10 @@ export default function TodosScene() {
   const [selected, setSelected] = useState({})
   const {todos, actions} = useTodos()
   const {save, drop, saving, droping} = actions
-  const disabled = todos.isFetching || saving || droping
+  const disabled = todos.isLoading || saving || droping
   useEffect(() => {
-    loader.emit(todos.isFetching)
-  }, [todos.isFetching])
+    loader.emit(todos.isLoading)
+  }, [todos.isLoading])
   useEffect(() => {
     if (session.user) {
       notification.emit(`¡Hola @${session.user.name}!`, 'welcome')
@@ -27,6 +28,11 @@ export default function TodosScene() {
     <React.Fragment>
       <div className="container">
         <div className="content">
+          {todos.isFetching && !todos.isLoading ?
+            <div className="message mB">
+              <FontAwesomeIcon icon={['fas', 'spinner']} spin />
+            </div>
+          : null}
           {todos.data?.length > 0 ?
             <div className="grid col-4 cards">
               <Suspense fallback={<span></span>}>
